@@ -117,3 +117,37 @@ class Subject(models.Model):
         ordering = ['name']
         verbose_name = _("Asignatura")
         verbose_name_plural = _("Asignaturas")
+
+class TeacherAssignment(models.Model):
+    """Defines which Subject a Teacher teaches for a specific Class (Grade+Paralelo) in an AcademicYear."""
+    # --- CHANGE Teacher to a string reference ---
+    teacher = models.ForeignKey(
+        'teachers.Teacher', # Use 'app_label.ModelName' string
+        on_delete=models.CASCADE,
+        related_name='assignments',
+        verbose_name=_("Docente")
+    )
+    # --- /CHANGE ---
+    academic_year = models.ForeignKey(AcademicYear, on_delete=models.CASCADE, related_name='teacher_assignments', verbose_name=_("Año Académico"))
+    grade_level = models.ForeignKey(GradeLevel, on_delete=models.CASCADE, related_name='teacher_assignments', verbose_name=_("Grado"))
+    paralelo = models.ForeignKey(Paralelo, on_delete=models.CASCADE, related_name='teacher_assignments', verbose_name=_("Paralelo"))
+    subject = models.ForeignKey(Subject, on_delete=models.PROTECT, related_name='teacher_assignments', verbose_name=_("Asignatura"))
+
+    # ... (Meta and __str__ remain the same) ...
+    class Meta:
+        unique_together = ('teacher', 'academic_year', 'grade_level', 'paralelo')
+        verbose_name = _("Asignación Docente por Clase")
+        verbose_name_plural = _("Asignaciones Docentes por Clase")
+        ordering = ['academic_year', 'teacher', 'grade_level', 'paralelo']
+
+    def __str__(self):
+         # __str__ might need adjustment later if teacher isn't loaded yet,
+         # but for migrations this should be fine. A common pattern is:
+         # try:
+         #     teacher_name = self.teacher.full_name
+         # except Teacher.DoesNotExist: # Need to import Teacher from teachers.models here *inside* the method
+         #     teacher_name = "[Deleted Teacher]"
+         # return f"{teacher_name} - {self.subject.name} ({self.grade_level.code}{self.paralelo.code}) - {self.academic_year.year}"
+         # For now, keep it simple:
+        return f"Assignment for Teacher ID {self.teacher_id} - {self.subject.name} ({self.grade_level.code}{self.paralelo.code}) - {self.academic_year.year}"
+

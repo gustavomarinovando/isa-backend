@@ -25,7 +25,7 @@ class PeriodProgress(models.Model):
     grade_level = models.ForeignKey(GradeLevel, on_delete=models.CASCADE, related_name='period_progress') # Changed to FK
     periodo = models.ForeignKey(Periodo, on_delete=models.CASCADE, related_name='progress_records') # Changed to FK
     paralelo = models.ForeignKey(Paralelo, on_delete=models.CASCADE, related_name='period_progress') # Changed to FK
-    subject = models.ForeignKey(Subject, on_delete=models.SET_NULL, null=True, blank=True, related_name='topic_completions') # Optional FK
+    subject = models.ForeignKey(Subject, on_delete=models.SET_NULL, null=True, blank=True, related_name='period_progress_records') # Optional FK
     progress_percentage = models.FloatField()
     last_updated = models.DateTimeField(default=timezone.now)
 
@@ -45,7 +45,7 @@ class TopicCompletion(models.Model):
     grade_level = models.ForeignKey(GradeLevel, on_delete=models.CASCADE, related_name='topic_completions') # Changed to FK
     periodo = models.ForeignKey(Periodo, on_delete=models.CASCADE, related_name='topic_completions') # Changed to FK
     paralelo = models.ForeignKey(Paralelo, on_delete=models.CASCADE, related_name='topic_completions') # Changed to FK
-    subject = models.ForeignKey(Subject, on_delete=models.SET_NULL, null=True, blank=True, related_name='topic_completions') # Optional FK
+    subject = models.ForeignKey(Subject, on_delete=models.SET_NULL, null=True, blank=True, related_name='topic_completion_records') # Optional FK
     tema_number = models.CharField(max_length=10, blank=True, null=True)
     tema_title = models.TextField()
     completion_date = models.DateField()
